@@ -11,7 +11,9 @@ Jiwon "Daniel" Kim - kim2219@purdue.edu
 
 
 ## Project Description: 
-
+Bookmarking page. User creates an account and stores their bookmarkable websites. Their bookmarked websites are hosted on a dashboard webpage accessible by logging into their account. 
 
 ## Tech Stack: 
-
+Node.js - Express
+MongoDB
+AngularJS
