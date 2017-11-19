@@ -1,5 +1,3 @@
-"""This is a sample settings.py; I highly recommend using different values."""
-
 import os
 
 

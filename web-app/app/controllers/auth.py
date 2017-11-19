@@ -1,5 +1,5 @@
 from app import app, db
-from app.views.auth import SignupForm
+from app.views.auth import SignupForm, LoginForm
 from app.models.user import User, Role
 
 from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for
@@ -42,6 +42,31 @@ def signup_page():
     return response
 
 
+@auth.route('/login', methods=['GET', 'POST'])
+def login_page():
+    """Displays the login page"""
+    form = LoginForm(request.form)
+
+    if request.method == 'GET':
+        return render_template('auth/login.html', form=form)
+
+    # validate the user's input
+    if not form.validate():
+        flash('error Invalid Input Provided. Please Try Again.')
+        return redirect(url_for('auth.signup_page'))
+
+    email = form['email'].data
+    password = form['password'].data
+
+    # send the request
+    response = login(dict(
+        email=email,
+        password=password
+    ))[0]
+
+    return response
+
+
 @auth.route('/request/signup', methods=['POST'])
 def signup(local_input=None):
     """Adds a new user to the database"""
@@ -74,11 +99,15 @@ def signup(local_input=None):
 
 
 @auth.route('/request/login', methods=['POST'])
-def login():
+def login(local_input=None):
     """Creates a session for the current user"""
-    data = request.get_json()
-    email = data.get('email')
-    password = data.get('password')
+    if local_input is None:
+        data = request.get_json()
+    else:
+        data = local_input
+
+    email = data['email']
+    password = data['password']
 
     response = dict()
 
@@ -96,7 +125,9 @@ def login():
             response['message']: f'invalid email or password'
     except Exception as e:
         response['error'] = str(e)
+        code = 400
 
+    response['code'] = code
     return jsonify(response), code
 
 
