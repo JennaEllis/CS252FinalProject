@@ -1,7 +1,9 @@
+import json
 from app import app, db
+from app.views.auth import SignupForm
 from app.models.user import User, Role
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, redirect, render_template, request, url_for
 from flask_security import Security, SQLAlchemyUserDatastore
 from flask_security import login_user, login_required, logout_user
 from flask_security.utils import hash_password, verify_password
@@ -14,18 +16,48 @@ user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(app, user_datastore)
 
 
-@auth.route('/signup', methods=['POST'])
+@auth.route('/signup', methods=['GET', 'POST'])
+def signup_page(self):
+    if request.method == 'GET':
+        return render_template('auth/signup.html', form=SignupForm())
+
+    # validate the user's input
+    form = SignupForm()
+    if not form.validate():
+        flash('error Invalid Input Provided. Please Try Again.')
+        return redirect(url_for('auth.signup_page'))
+
+    name = form.name.data
+    email = form.email.data
+    password = form.password.data
+
+    # send the request
+    response = self.client.post(
+        '/auth/request/signup',
+        data=json.dumps(dict(
+            name=name,
+            email=email,
+            password=password
+        )),
+        content_type='application/json'
+    )
+
+    res = json.loads(response.data.decode())
+    return jsonify(res)
+
+
+@auth.route('/request/signup', methods=['POST'])
 def signup():
     """Adds a new user to the database"""
     data = request.get_json()
     email = data.get('email')
-    username = data.get('username')
+    name = data.get('name')
     password = hash_password(data.get('password'))
 
     response = dict()
 
     try:
-        db.session.add(User(email=email, username=username, password=password))
+        db.session.add(User(email=email, name=username, password=password))
         db.session.commit()
 
         response['status'] = 'success'
@@ -40,7 +72,7 @@ def signup():
     return jsonify(response), code
 
 
-@auth.route('/login', methods=['POST'])
+@auth.route('/request/login', methods=['POST'])
 def login():
     """Creates a session for the current user"""
     data = request.get_json()
@@ -67,7 +99,7 @@ def login():
     return jsonify(response), code
 
 
-@auth.route('/logout', methods=['GET'])
+@auth.route('/request/logout', methods=['GET'])
 @login_required
 def logout():
     """Deletes the current user's session"""

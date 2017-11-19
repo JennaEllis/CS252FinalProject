@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %} Marked Signup {% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1 class="text-center"> Marked Signup </h1>
+
+  <form method="post">
+    <br>
+    <div class="text-center">
+
+      <div class="md-form">
+        <input type="text" name="name" class="form-control" id="nameField" value="{{ request.form.name }}" required> 
+        <label for="nameField"> First and Last Name </label>
+      </div>
+      
+      <div class="md-form">
+        <input type="email" name="email" class="form-control" id="emailField" value="{{ request.form.email }}" required> 
+        <label for="emailField"> Email Address </label>
+      </div>
+
+      <div class="md-form">
+        <input type="password" name="password" class="form-control" id="passwordField" value="{{ request.form.password }}" required> 
+        <label for="passwordField"> Password </label>
+      </div>
+
+      <div class="md-form">
+        <button type="submit" class="btn btn-default"> Signup </button>
+      </div>
+
+      <p> Already have an account? <a href="/auth/login"> Log in here! </a></p>
+    </div>
+  </form>
+</div>
+{% endblock %}
