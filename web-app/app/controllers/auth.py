@@ -1,10 +1,11 @@
+import json
 from app import app, db
 from app.views.auth import SignupForm, LoginForm
 from app.models.user import User, Role
 
-from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for
+from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_security import Security, SQLAlchemyUserDatastore
-from flask_security import login_user, login_required, logout_user
+from flask_security import current_user, login_user, login_required, logout_user
 from flask_security.utils import hash_password, verify_password
 
 auth = Blueprint('auth', __name__)
@@ -32,14 +33,22 @@ def signup_page():
     email = form['email'].data
     password = form['password'].data
 
-    # send the request
-    response = signup(dict(
+    response = json.loads(signup(dict(
         name=name,
         email=email,
         password=password
-    ))[0]
+    ))[0])
 
-    return response
+    if response['status'] == 'failure':
+        flash('error {}'.format(response['message']))
+        return redirect(url_for('auth.signup_page'))
+
+    if response['status'] != 'success':
+        flash('error An Error has Occured. Please Try Again.')
+        return redirect(url_for('auth.signup_page'))
+
+    flash('success Successfully Created Acount. Please Log In.')
+    return redirect(url_for('auth.login_page'))
 
 
 @auth.route('/login', methods=['GET', 'POST'])
@@ -58,13 +67,21 @@ def login_page():
     email = form['email'].data
     password = form['password'].data
 
-    # send the request
-    response = login(dict(
+    response = json.loads(login(dict(
         email=email,
         password=password
-    ))[0]
+    ))[0])
 
-    return response
+    if response['status'] == 'failure':
+        flash('error {}'.format(response['message']))
+        return redirect(url_for('auth.login_page'))
+
+    if response['status'] != 'success':
+        flash('error {} An Error has Occured. Please Try Again.'.format(response['status']))
+        return redirect(url_for('auth.login_page'))
+
+    flash('success Welcome, {}.'.format(current_user.name))
+    return redirect('/')
 
 
 @auth.route('/request/signup', methods=['POST'])
@@ -95,7 +112,7 @@ def signup(local_input=None):
         code = 404
 
     response['code'] = code
-    return jsonify(response), code
+    return json.dumps(response), code
 
 
 @auth.route('/request/login', methods=['POST'])
@@ -117,18 +134,18 @@ def login(local_input=None):
         if verify_password(password, user.password):
             login_user(user)
 
-            response['status'] = 'successs'
+            response['status'] = 'success'
             response['message'] = 'user successfully logged in'
             code = 202
         else:
             response['status']: 'failure'
-            response['message']: f'invalid email or password'
+            response['message']: 'invalid email or password'
     except Exception as e:
         response['error'] = str(e)
         code = 400
 
     response['code'] = code
-    return jsonify(response), code
+    return json.dumps(response), code
 
 
 @auth.route('/request/logout', methods=['GET'])
@@ -148,4 +165,4 @@ def logout():
         response['error'] = str(e)
         code = 400
 
-    return jsonify(response), code
+    return json.dumps(response), code
