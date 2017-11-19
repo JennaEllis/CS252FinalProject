@@ -1,9 +1,8 @@
-import json
 from app import app, db
 from app.views.auth import SignupForm
 from app.models.user import User, Role
 
-from flask import Blueprint, jsonify, redirect, render_template, request, url_for
+from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for
 from flask_security import Security, SQLAlchemyUserDatastore
 from flask_security import login_user, login_required, logout_user
 from flask_security.utils import hash_password, verify_password
@@ -17,47 +16,48 @@ security = Security(app, user_datastore)
 
 
 @auth.route('/signup', methods=['GET', 'POST'])
-def signup_page(self):
+def signup_page():
+    """Displays the signup page"""
+    form = SignupForm(request.form)
+
     if request.method == 'GET':
-        return render_template('auth/signup.html', form=SignupForm())
+        return render_template('auth/signup.html', form=form)
 
     # validate the user's input
-    form = SignupForm()
     if not form.validate():
         flash('error Invalid Input Provided. Please Try Again.')
         return redirect(url_for('auth.signup_page'))
 
-    name = form.name.data
-    email = form.email.data
-    password = form.password.data
+    name = form['name'].data
+    email = form['email'].data
+    password = form['password'].data
 
     # send the request
-    response = self.client.post(
-        '/auth/request/signup',
-        data=json.dumps(dict(
-            name=name,
-            email=email,
-            password=password
-        )),
-        content_type='application/json'
-    )
+    response = signup(dict(
+        name=name,
+        email=email,
+        password=password
+    ))[0]
 
-    res = json.loads(response.data.decode())
-    return jsonify(res)
+    return response
 
 
 @auth.route('/request/signup', methods=['POST'])
-def signup():
+def signup(local_input=None):
     """Adds a new user to the database"""
-    data = request.get_json()
-    email = data.get('email')
-    name = data.get('name')
-    password = hash_password(data.get('password'))
+    if local_input is None:
+        data = request.get_json()
+    else:
+        data = local_input
+
+    email = data['email']
+    name = data['name']
+    password = hash_password(data['password'])
 
     response = dict()
 
     try:
-        db.session.add(User(email=email, name=username, password=password))
+        db.session.add(User(email=email, name=name, password=password))
         db.session.commit()
 
         response['status'] = 'success'
@@ -69,6 +69,7 @@ def signup():
         response['error'] = str(e)
         code = 404
 
+    response['code'] = code
     return jsonify(response), code
 
 
