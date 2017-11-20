@@ -1,4 +1,5 @@
 import json
+from flask import jsonify
 from app import app, db
 from app.views.auth import SignupForm, LoginForm
 from app.models.user import User, Role
@@ -77,7 +78,7 @@ def login_page():
         return redirect(url_for('auth.login_page'))
 
     if response['status'] != 'success':
-        flash('error {} An Error has Occured. Please Try Again.'.format(response['status']))
+        flash('error An Error has Occured. Please Try Again.')
         return redirect(url_for('auth.login_page'))
 
     flash('success Welcome, {}.'.format(current_user.name))
@@ -107,7 +108,7 @@ def signup(local_input=None):
         code = 201
     except Exception as e:
         response['status'] = 'failure'
-        response['message'] = f'user already exists'
+        response['message'] = 'An account is already using this email.'
         response['error'] = str(e)
         code = 404
 
