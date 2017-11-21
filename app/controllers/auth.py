@@ -1,6 +1,5 @@
 import binascii
 import os
-import json
 from flask import jsonify, Response
 from app import app, db
 from app.models.user import User, Role
