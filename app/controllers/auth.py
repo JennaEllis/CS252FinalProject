@@ -1,6 +1,7 @@
 import binascii
 import os
-from flask import jsonify
+import json
+from flask import jsonify, Response
 from app import app, db
 from app.models.user import User, Role
 from flask import Blueprint, request
@@ -25,12 +26,12 @@ def validate_request(req):
     user = User.query.filter_by(email=email).first()
 
     if user is None:
-        return False
+        return None
 
     if user.token != token:
-        return False
+        return None
 
-    return True
+    return user
 
 
 @auth.route('/signup', methods=['POST'])
@@ -50,15 +51,15 @@ def signup():
         db.session.commit()
 
         response['status'] = 'success'
-        response['message'] = f'{email} was added'
-        code = 201
+        response['message'] = f'Created a new account with email: {email}'
+        response['code'] = 201
     except Exception as e:
         response['status'] = 'failure'
         response['message'] = 'An account is already using this email.'
         response['error'] = str(e)
-        code = 404
+        response['code'] = 404
 
-    return jsonify(response), code
+    return jsonify(response)
 
 
 @auth.route('/login', methods=['POST'])
@@ -70,29 +71,26 @@ def login():
     password = data['password']
 
     response = dict()
-    code = 400
 
-    try:
-        user = User.query.filter_by(email=email).first()
+    user = User.query.filter_by(email=email).first()
 
-        if verify_password(password, user.password):
-            user.token = binascii.b2a_hex(os.urandom(16))
-            db.session.commit()
+    if user is not None and verify_password(password, user.password):
+        user.token = binascii.b2a_hex(os.urandom(16))
+        db.session.commit()
 
-            response['email'] = user.email
-            response['name'] = user.name
-            response['token'] = user.token
-            response['status'] = 'success'
-            response['message'] = 'user successfully logged in'
-            code = 202
-        else:
-            response['status'] = 'failure'
-            response['message'] = 'invalid email or password'
-            code = 401
-    except Exception as e:
-        response['error'] = str(e)
+        response['email'] = user.email
+        response['name'] = user.name
+        response['token'] = user.token
 
-    return jsonify(response), code
+        response['status'] = 'success'
+        response['message'] = f'{user.name} successfully logged in.'
+        response['code'] = 202
+    else:
+        response['status'] = 'failure'
+        response['message'] = 'Invalid email or password given.'
+        response['code'] = 401
+
+    return jsonify(response)
 
 
 @auth.route('/logout', methods=['POST'])
@@ -102,23 +100,23 @@ def logout():
 
     if not validate_request(request):
         response['status'] = 'failure'
-        response['message'] = 'invalid request'
-        code = 401
-        return jsonify(response), code
+        response['message'] = 'Received invalid request.'
+        response['code'] = 401
+        return jsonify(response)
 
-    try:
-        data = request.get_json()
-        user = User.query.filter_by(email=data['email']).first()
+    data = request.get_json()
+    user = User.query.filter_by(email=data['email']).first()
+
+    if user is None:
+        response['status'] = 'failure'
+        response['message'] = 'Could not logout.'
+        response['code'] = 400
+    else:
         user.token = "0"
         db.session.commit()
 
         response['status'] = 'success'
-        response['message'] = f'logged out user'
-        code = 200
-    except Exception as e:
-        response['status'] = 'failure'
-        response['message'] = f'could not log out user'
-        response['error'] = str(e)
-        code = 400
+        response['message'] = 'Successfully logged out.'
+        response['code'] = 200
 
-    return jsonify(response), code
+    return jsonify(response)
