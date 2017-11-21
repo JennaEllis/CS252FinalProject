@@ -58,7 +58,6 @@ def signup():
         response['error'] = str(e)
         code = 404
 
-    response['code'] = code
     return jsonify(response), code
 
 
@@ -81,6 +80,7 @@ def login():
             db.session.commit()
 
             response['email'] = user.email
+            response['name'] = user.name
             response['token'] = user.token
             response['status'] = 'success'
             response['message'] = 'user successfully logged in'
@@ -92,7 +92,6 @@ def login():
     except Exception as e:
         response['error'] = str(e)
 
-    response['code'] = code
     return jsonify(response), code
 
 
