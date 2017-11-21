@@ -16,7 +16,7 @@ security = Security(app, user_datastore)
 
 
 def validate_request(request):
-    """Validates a http request"""
+    """Validates an http request"""
     data = request.get_json()
 
     email = data['email']
