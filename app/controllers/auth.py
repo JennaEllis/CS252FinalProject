@@ -15,9 +15,9 @@ user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(app, user_datastore)
 
 
-def validate_request(request):
+def validate_request(req):
     """Validates an http request"""
-    data = request.get_json()
+    data = req.get_json()
 
     email = data['email']
     token = data['token']
@@ -86,8 +86,8 @@ def login():
             response['message'] = 'user successfully logged in'
             code = 202
         else:
-            response['status']: 'failure'
-            response['message']: 'invalid email or password'
+            response['status'] = 'failure'
+            response['message'] = 'invalid email or password'
             code = 401
     except Exception as e:
         response['error'] = str(e)
