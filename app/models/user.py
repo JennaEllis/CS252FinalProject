@@ -25,11 +25,13 @@ class User(db.Model, UserMixin):
     name = db.Column(db.String(128), nullable=False, unique=True)
     email = db.Column(db.String(128), nullable=False, unique=True)
     password = db.Column(db.String(256), nullable=False)
+
     created_at = db.Column(db.DateTime)
+    confirmed_at = db.Column(db.DateTime())
 
     active = db.Column(db.Boolean(), default=False)
     authenticated = db.Column(db.Boolean(), default=False)
-    confirmed_at = db.Column(db.DateTime())
+    token = db.Column(db.String(128), nullable=False, default="0")
 
     roles = db.relationship(
         'Role', secondary=roles_users,
