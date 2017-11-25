@@ -1,9 +1,10 @@
 import binascii
 import os
-from flask import jsonify, Response
+
 from app import app, db
 from app.models.user import User, Role
-from flask import Blueprint, request
+
+from flask import Blueprint, jsonify, request
 from flask_security import Security, SQLAlchemyUserDatastore
 from flask_security.utils import hash_password, verify_password
 
@@ -24,10 +25,7 @@ def validate_request(req):
 
     user = User.query.filter_by(email=email).first()
 
-    if user is None:
-        return None
-
-    if user.token != token:
+    if user is None or user.token != token or token == "0":
         return None
 
     return user

@@ -15,8 +15,10 @@ db = SQLAlchemy(app)
 
 # import and register blueprints
 from app.controllers.auth import auth
+from app.controllers.create import create
 
 app.register_blueprint(auth, url_prefix='/auth')
+app.register_blueprint(create, url_prefix='/create')
 
 
 @app.before_first_request

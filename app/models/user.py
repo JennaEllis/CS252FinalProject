@@ -10,8 +10,15 @@ roles_users = db.Table(
 )
 
 
+bookmarks_users = db.Table(
+    'bookmarks_users',
+    db.Column('user_id', db.Integer(), db.ForeignKey('users.id'), primary_key=True),
+    db.Column('bookmark_id', db.Integer(), db.ForeignKey('bookmarks.id'), primary_key=True)
+)
+
+
 class Role(db.Model, RoleMixin):
-    __tablename__ = "roles"
+    __tablename__ = 'roles'
     id = db.Column(db.Integer(), primary_key=True)
 
     name = db.Column(db.String(80), unique=True)
@@ -19,12 +26,17 @@ class Role(db.Model, RoleMixin):
 
 
 class User(db.Model, UserMixin):
-    __tablename__ = "users"
+    __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
     name = db.Column(db.String(128), nullable=False, unique=True)
     email = db.Column(db.String(128), nullable=False, unique=True)
     password = db.Column(db.String(256), nullable=False)
+
+    bookmarks = db.relationship(
+        'Bookmark', secondary=bookmarks_users,
+        backref=db.backref('users', lazy=True)
+    )
 
     created_at = db.Column(db.DateTime)
     confirmed_at = db.Column(db.DateTime())
