@@ -2,32 +2,34 @@ from app import db
 from app.models.bookmark import Bookmark, Tag
 from app.controllers.auth import validate_request
 
-from flask import BluePrint, jsonify, request
+from flask import Blueprint, jsonify, request
 
-delete = Blueprint('delete', __name__)
+update = Blueprint('update', __name__)
 
-@delete.route('/remove', methods=['POST'])
-def delete_bookmark():
-	"""Deletes a bookmark for the given user"""
+@update.route('/update', methods=['POST'])
+def update_bookmark():
+	"""Update bookmark for the given user"""
 	response = dict()
 	response['status'] = 'failure'
 
 	user = validate_request(request)
 
-	if user is None:
-		response['messsage'] = 'Failed to validate request'
+	if use is None:
+		response['message'] = 'Failed to validate request'
 		response['code'] = 401
 		return jsonify(response)
 
 	data = request.get_json()
 
 	try:
-		# trying to delete the bookmark here
-		
-		response['status'] = 'success'
-		response['message'] = 'Deleted a bookmark'
-		response['code'] = 201
+		# doing some dank bookmark updating here 
 
+
+
+
+		response['status'] = 'success'
+		response['message'] = 'Updated existing bookmark'
+		response['code'] 201
 	except Exception as e:
 		response['message'] = 'An error has occurred'
 		response['error'] = str(e)
