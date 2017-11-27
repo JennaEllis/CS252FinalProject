@@ -21,11 +21,11 @@ def validate_request(req):
     data = req.get_json()
 
     email = data['email']
-    token = data['token']
+    token = hash_password(data['token'])
 
     user = User.query.filter_by(email=email).first()
 
-    if user is None or user.token != token or token == "0":
+    if user is None or not verify_password(user.token, token) or token == "0":
         return None
 
     return user
@@ -48,7 +48,7 @@ def signup():
         db.session.commit()
 
         response['status'] = 'success'
-        response['message'] = f'Created a new account with email: {email}'
+        response['message'] = 'Created a new account with email: {email}'
         response['code'] = 201
     except Exception as e:
         response['status'] = 'failure'
@@ -72,7 +72,7 @@ def login():
     user = User.query.filter_by(email=email).first()
 
     if user is not None and verify_password(password, user.password):
-        user.token = binascii.b2a_hex(os.urandom(16))
+        user.token = hash_password(binascii.b2a_hex(os.urandom(16)))
         db.session.commit()
 
         response['email'] = user.email

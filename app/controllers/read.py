@@ -3,11 +3,11 @@ from app.controllers.auth import validate_request
 from flask import Blueprint, jsonify, request
 
 
-get = Blueprint('get', __name__)
+read = Blueprint('read', __name__)
 
 
-@get.route('/all', methods=['POST'])
-def get_all_bookmarks():
+@read.route('/all', strict_slashes=False, methods=['POST'])
+def read_all_bookmarks():
     """Fetches all the bookmarks for a given user"""
     response = dict()
     response['status'] = 'failure'
