@@ -43,7 +43,7 @@ class User(db.Model, UserMixin):
 
     active = db.Column(db.Boolean(), default=False)
     authenticated = db.Column(db.Boolean(), default=False)
-    token = db.Column(db.String(128), nullable=False, default="0")
+    token = db.Column(db.String(256), nullable=False, default="0")
 
     roles = db.relationship(
         'Role', secondary=roles_users,
