@@ -8,7 +8,7 @@ from flask import Blueprint, jsonify, request
 create = Blueprint('create', __name__)
 
 
-@create.route('/add', methods=['POST'])
+@create.route('/', strict_slashes=False, methods=['POST'])
 def create_bookmark():
     """Creates a new bookmark for the given user"""
     response = dict()

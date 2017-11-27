@@ -12,15 +12,16 @@ app.config.from_object('app.config.DevelopmentConfig')
 # set database
 db = SQLAlchemy(app)
 
-
 # import and register blueprints
 from app.controllers.auth import auth
 from app.controllers.create import create
-from app.controllers.get import get
+from app.controllers.read import read
+from app.controllers.delete import delete
 
 app.register_blueprint(auth, url_prefix='/auth')
 app.register_blueprint(create, url_prefix='/create')
-app.register_blueprint(get, url_prefix='/get')
+app.register_blueprint(read, url_prefix='/read')
+app.register_blueprint(delete, url_prefix='/delete')
 
 
 @app.before_first_request
@@ -28,8 +29,3 @@ def init_db():
     db.drop_all()
     db.create_all()
     db.session.commit()
-
-
-@app.route('/', methods=['GET'])
-def index():
-    return jsonify({'status': 'success'})
