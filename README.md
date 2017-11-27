@@ -16,3 +16,5 @@ Bookmarking page. User creates an account and stores their bookmarkable websites
 ## Tech Stack: 
 Server - Python/Flask/Postgresql
 Client - NodeJS (Express)
+
+The associated NodeJS client is hosted in the markd-client git repository: [Markd-Client](https://github.com/crouse0/markd-client)
