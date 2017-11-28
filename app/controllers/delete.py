@@ -11,12 +11,12 @@ delete = Blueprint('delete', __name__)
 def delete_bookmark():
     """Deletes a bookmark for the given user"""
     response = dict()
-    response['status'] = 'failure'
 
     user = validate_request(request)
 
     if user is None:
-        response['messsage'] = 'Failed to validate request'
+        response['message'] = 'Failed to validate request'
+        response['status'] = 'failure'
         response['code'] = 401
         return jsonify(response)
 
@@ -41,6 +41,7 @@ def delete_bookmark():
         response['code'] = 200
 
     except Exception as e:
+        response['status'] = 'failure'
         response['message'] = 'An error has occurred'
         response['error'] = str(e)
         response['code'] = 400
