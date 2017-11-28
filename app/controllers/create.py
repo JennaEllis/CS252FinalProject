@@ -27,6 +27,7 @@ def create_bookmark():
         url = data['url']
         name = data['name']
         tags = data['tags']
+        tags[:] = [x for x in tags if x != '$_$_$']
 
         # create the new tags
         for tag in tags:
