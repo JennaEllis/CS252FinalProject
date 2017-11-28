@@ -6,8 +6,8 @@ def init_env():
     os.environ['SECRET_KEY'] = 'b2e4d39074fb44dc4a3dd80cb054b34e9b38352bc29f6fd4adba96552281b2f5'
 
     # database urls
-    os.environ['DATABASE_DEV_URL'] = 'postgresql://localhost:5432/lab6'
-    os.environ['DATABASE_TEST_URL'] = 'postgresql://localhost:5432/lab6_test'
+    os.environ['DATABASE_DEV_URL'] = 'postgresql:///lab6'
+    os.environ['DATABASE_TEST_URL'] = 'postgresql:///lab6_test'
 
     # security hashes
     os.environ['SECURITY_PASSWORD_HASH'] = 'pbkdf2_sha512'
