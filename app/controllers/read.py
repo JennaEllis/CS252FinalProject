@@ -26,7 +26,8 @@ def read_all_bookmarks():
             bookmark_data = {
                 'name': bookmark.name,
                 'url': bookmark.url,
-                "tags": [tag.name for tag in bookmark.tags]
+                'tags': [tag.name for tag in bookmark.tags],
+                'id': bookmark.id
             }
             bookmarks.append(bookmark_data)
 

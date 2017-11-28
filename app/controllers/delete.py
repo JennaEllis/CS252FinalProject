@@ -18,6 +18,7 @@ def delete_bookmark():
         response['message'] = 'Failed to validate request'
         response['status'] = 'failure'
         response['code'] = 401
+        print(response)
         return jsonify(response)
 
     data = request.get_json()
@@ -34,6 +35,7 @@ def delete_bookmark():
             return jsonify(response)
 
         user.bookmarks.remove(bookmark)
+        db.session.delete(bookmark)
         db.session.commit()
 
         response['status'] = 'success'
@@ -46,4 +48,5 @@ def delete_bookmark():
         response['error'] = str(e)
         response['code'] = 400
 
+    print(response)
     return jsonify(response)
