@@ -10,11 +10,11 @@ read = Blueprint('read', __name__)
 def read_all_bookmarks():
     """Fetches all the bookmarks for a given user"""
     response = dict()
-    response['status'] = 'failure'
 
     user = validate_request(request)
 
     if user is None:
+        response['status'] = 'failure'
         response['message'] = 'Failed to validate request'
         response['code'] = 401
         return jsonify(response)
@@ -36,6 +36,7 @@ def read_all_bookmarks():
         response['code'] = 200
 
     except Exception as e:
+        response['status'] = 'failure'
         response['message'] = 'Failed to retrieve bookmarks'
         response['error'] = str(e)
         response['code'] = 400

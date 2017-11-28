@@ -20,8 +20,11 @@ def validate_request(req):
     """Validates an http request"""
     data = req.get_json()
 
-    email = data['email']
-    token = hash_password(data['token'])
+    try:
+        email = data['email']
+        token = hash_password(data['token'])
+    except Exception:
+        return None
 
     user = User.query.filter_by(email=email).first()
 
@@ -36,14 +39,14 @@ def signup():
     """Adds a new user to the database"""
     data = request.get_json()
 
-    email = data['email']
-    name = data['name']
-    password = hash_password(data['password'])
-    token = "0"
-
     response = dict()
 
     try:
+        email = data['email']
+        name = data['name']
+        password = hash_password(data['password'])
+        token = "0"
+
         db.session.add(User(email=email, name=name, password=password, token=token))
         db.session.commit()
 
@@ -63,11 +66,16 @@ def signup():
 def login():
     """Creates a session for the current user"""
     data = request.get_json()
-
-    email = data['email']
-    password = data['password']
-
     response = dict()
+
+    try:
+        email = data['email']
+        password = data['password']
+    except Exception:
+        response['status'] = 'failure'
+        response['message'] = 'Invalid request input'
+        response['code'] = 401
+        return jsonify(response)
 
     user = User.query.filter_by(email=email).first()
 
