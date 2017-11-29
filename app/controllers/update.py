@@ -7,7 +7,7 @@ from flask import Blueprint, jsonify, request
 update = Blueprint('update', __name__)
 
 
-@update.route('/update', strict_slashes=False, methods=['POST'])
+@update.route('/', strict_slashes=False, methods=['POST'])
 def update_bookmark():
     """Update bookmark for the given user"""
     response = dict()
@@ -21,6 +21,7 @@ def update_bookmark():
         return jsonify(response)
 
     data = request.get_json()
+    print(str(data))
 
     try:
         bookmark_id = data['id']
@@ -45,7 +46,23 @@ def update_bookmark():
                 response['code'] = 400
                 return jsonify(response)
 
-            bookmark.tags = data['tags']
+            tags = data['tags']
+            tags[:] = [x for x in tags if x != '$_$_$']
+
+            for tag in tags:
+                tag_search = Tag.query.filter_by(name=tag.lower()).first()
+
+                if tag_search is not None:
+                    continue
+
+                new_tag = Tag(name=tag.lower())
+
+                db.session.add(new_tag)
+                db.session.commit()
+
+            valid_tags = [Tag.query.filter_by(name=tag).one() for tag in tags]
+
+            bookmark.tags = valid_tags
 
         db.session.commit()
 
@@ -57,4 +74,5 @@ def update_bookmark():
         response['error'] = str(e)
         response['code'] = 400
 
+    print(response)
     return jsonify(response)
