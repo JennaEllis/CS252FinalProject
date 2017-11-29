@@ -6,6 +6,8 @@ def init_env():
     os.environ['SECRET_KEY'] = 'b2e4d39074fb44dc4a3dd80cb054b34e9b38352bc29f6fd4adba96552281b2f5'
 
     # database urls
+    os.environ['DATABASE_URL'] = 'postgres://kdvpylfkxzupwf:1e7221d50ae7a8025aa7856c0dab0b03d2d0899cea8' \
+        + '9ee65d8e77ec50e9b1870@ec2-54-221-246-84.compute-1.amazonaws.com:5432/d3uq93q1v2gqp2'
     os.environ['DATABASE_DEV_URL'] = 'postgresql:///lab6'
     os.environ['DATABASE_TEST_URL'] = 'postgresql:///lab6_test'
 

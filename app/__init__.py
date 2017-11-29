@@ -7,7 +7,7 @@ init_env()
 app = Flask(__name__)
 
 # set config
-app.config.from_object('app.config.DevelopmentConfig')
+app.config.from_object('app.config.ProductionConfig')
 
 # set database
 db = SQLAlchemy(app)
