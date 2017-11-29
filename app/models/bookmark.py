@@ -19,7 +19,7 @@ class Bookmark(db.Model):
     __tablename__ = 'bookmarks'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
-    url = db.Column(db.String(80), nullable=False)
+    url = db.Column(db.String(256), nullable=False)
     name = db.Column(db.String(80), nullable=False)
 
     tags = db.relationship(
