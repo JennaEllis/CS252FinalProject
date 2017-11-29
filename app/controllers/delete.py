@@ -1,3 +1,5 @@
+from pprint import pprint as pp
+
 from app import db
 from app.models.bookmark import Bookmark, Tag
 from app.controllers.auth import validate_request
@@ -19,6 +21,8 @@ def delete_bookmark():
         response['status'] = 'failure'
         response['code'] = 401
         print(response)
+        pp(response)
+        pp(response)
         return jsonify(response)
 
     data = request.get_json()
@@ -32,6 +36,7 @@ def delete_bookmark():
             response['status'] = 'failure'
             response['message'] = 'Cannot delete that bookmark'
             response['code'] = 401
+            pp(response)
             return jsonify(response)
 
         user.bookmarks.remove(bookmark)
@@ -48,5 +53,5 @@ def delete_bookmark():
         response['error'] = str(e)
         response['code'] = 400
 
-    print(response)
+    pp(response)
     return jsonify(response)

@@ -1,3 +1,5 @@
+from pprint import pprint as pp
+
 from app import db
 from app.models.bookmark import Bookmark, Tag
 from app.controllers.auth import validate_request
@@ -18,6 +20,7 @@ def update_bookmark():
     if user is None:
         response['message'] = 'Failed to validate request'
         response['code'] = 401
+        pp(response)
         return jsonify(response)
 
     data = request.get_json()
@@ -31,6 +34,7 @@ def update_bookmark():
             response['status'] = 'failure'
             response['message'] = 'Could not update bookmark'
             response['code'] = 401
+            pp(response)
             return jsonify(response)
 
         if data['name'] is not None:
@@ -44,6 +48,7 @@ def update_bookmark():
                 response['status'] = 'failure'
                 response['message'] = 'Invalid number of tags'
                 response['code'] = 400
+                pp(response)
                 return jsonify(response)
 
             tags = data['tags']
@@ -74,5 +79,5 @@ def update_bookmark():
         response['error'] = str(e)
         response['code'] = 400
 
-    print(response)
+    pp(response)
     return jsonify(response)

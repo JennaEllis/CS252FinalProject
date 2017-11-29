@@ -1,3 +1,4 @@
+from pprint import pprint as pp
 from app import db
 from app.models.bookmark import Bookmark, Tag
 from app.controllers.auth import validate_request
@@ -19,6 +20,7 @@ def create_bookmark():
     if user is None:
         response['message'] = 'Failed to validate request'
         response['code'] = 401
+        pp(response)
         return jsonify(response)
 
     data = request.get_json()
@@ -58,4 +60,5 @@ def create_bookmark():
         response['error'] = str(e)
         response['code'] = 400
 
+    pp(response)
     return jsonify(response)

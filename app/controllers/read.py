@@ -1,3 +1,5 @@
+from pprint import pprint as pp
+
 from app.controllers.auth import validate_request
 from app.models.bookmark import Tag
 
@@ -18,6 +20,7 @@ def filter_by_tag(tag):
         response['status'] = 'failure'
         response['message'] = 'Failed to validate request'
         response['code'] = 401
+        pp(response)
         return jsonify(response)
 
     try:
@@ -27,6 +30,7 @@ def filter_by_tag(tag):
             response['status'] = 'failure'
             response['message'] = 'No matching bookmarks'
             response['code'] = 200
+            pp(response)
             return jsonify(response)
 
         bookmarks = []
@@ -54,6 +58,7 @@ def filter_by_tag(tag):
         response['error'] = str(e)
         response['code'] = 400
 
+    pp(response)
     return jsonify(response)
 
 
@@ -68,6 +73,7 @@ def read_all_bookmarks():
         response['status'] = 'failure'
         response['message'] = 'Failed to validate request'
         response['code'] = 401
+        pp(response)
         return jsonify(response)
 
     try:
@@ -93,4 +99,5 @@ def read_all_bookmarks():
         response['error'] = str(e)
         response['code'] = 400
 
+    pp(response)
     return jsonify(response)

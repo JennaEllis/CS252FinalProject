@@ -1,6 +1,8 @@
 import binascii
 import os
 
+from pprint import pprint as pp
+
 from app import app, db
 from app.models.user import User, Role
 
@@ -59,6 +61,7 @@ def signup():
         response['error'] = str(e)
         response['code'] = 404
 
+    pp(response)
     return jsonify(response)
 
 
@@ -75,6 +78,7 @@ def login():
         response['status'] = 'failure'
         response['message'] = 'Invalid request input'
         response['code'] = 401
+        pp(response)
         return jsonify(response)
 
     user = User.query.filter_by(email=email).first()
@@ -95,6 +99,7 @@ def login():
         response['message'] = 'Invalid email or password given.'
         response['code'] = 401
 
+    pp(response)
     return jsonify(response)
 
 
@@ -107,6 +112,7 @@ def logout():
         response['status'] = 'failure'
         response['message'] = 'Received invalid request.'
         response['code'] = 401
+        pp(response)
         return jsonify(response)
 
     data = request.get_json()
@@ -124,4 +130,5 @@ def logout():
         response['message'] = 'Successfully logged out.'
         response['code'] = 200
 
+    pp(response)
     return jsonify(response)
