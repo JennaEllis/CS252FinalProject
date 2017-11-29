@@ -51,7 +51,7 @@ def signup():
         db.session.commit()
 
         response['status'] = 'success'
-        response['message'] = 'Created a new account with email: {email}'
+        response['message'] = f'Created a new account with email: {email}'
         response['code'] = 201
     except Exception as e:
         response['status'] = 'failure'
