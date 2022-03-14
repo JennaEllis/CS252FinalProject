@@ -14,6 +14,7 @@ def create_bookmark():
     """Creates a new bookmark for the given user"""
     response = dict()
     response['status'] = 'failure'
+    print('testing')
 
     user = validate_request(request)
 
